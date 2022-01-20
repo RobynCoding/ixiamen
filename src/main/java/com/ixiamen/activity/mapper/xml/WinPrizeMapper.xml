@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ixiamen.activity.mapper.WinPrizeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ixiamen.activity.entity.WinPrize">
+        <id column="win_prize_id" property="winPrizeId" />
+        <result column="user_id" property="userId" />
+        <result column="user_name" property="userName" />
+        <result column="phone" property="phone" />
+        <result column="mobile" property="mobile" />
+        <result column="sign_in_count" property="signInCount" />
+        <result column="share_count" property="shareCount" />
+        <result column="answer_achievement_count" property="answerAchievementCount" />
+        <result column="answer_achievement_themes" property="answerAchievementThemes" />
+        <result column="win_prize_time" property="winPrizeTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        win_prize_id AS winPrizeId, user_id AS userId, user_name AS userName, phone, mobile, sign_in_count AS signInCount, share_count AS shareCount, answer_achievement_count AS answerAchievementCount, answer_achievement_themes AS answerAchievementThemes, win_prize_time AS winPrizeTime
+    </sql>
+
+</mapper>

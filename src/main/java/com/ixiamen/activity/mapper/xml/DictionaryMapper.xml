@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ixiamen.activity.mapper.DictionaryMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ixiamen.activity.entity.Dictionary">
+        <id column="id" property="id"/>
+        <result column="dictionary_code" property="dictionaryCode"/>
+        <result column="dictionary_name" property="dictionaryName"/>
+        <result column="dictionary_value" property="dictionaryValue"/>
+        <result column="dictionary_type" property="dictionaryType"/>
+        <result column="dictionary_des" property="dictionaryDes"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, dictionary_code AS dictionaryCode, dictionary_name AS dictionaryName, dictionary_value AS dictionaryValue,
+        dictionary_type AS dictionaryType, dictionary_des AS dictionaryDes
+    </sql>
+
+</mapper>

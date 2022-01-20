@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ixiamen.activity.mapper.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ixiamen.activity.entity.User">
+        <id column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="real_name" property="realName"/>
+        <result column="password" property="password"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="mobile" property="mobile"/>
+        <result column="head_url" property="headUrl"/>
+        <result column="status" property="status"/>
+        <result column="uuid" property="uuid"/>
+        <result column="create_time" property="createTime"/>
+        <result column="creater" property="creater"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="updater" property="updater"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="sso_id" property="ssoId"/>
+        <result column="source" property="source"/>
+        <result column="user_type" property="userType"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        user_id AS userId, user_name AS userName, real_name AS realName,
+        password AS password, email, phone, mobile, head_url AS headUrl,
+        status, uuid, create_time AS createTime,
+        creater, update_time AS updateTime, updater,last_login_time AS lastLoginTime,
+        sso_id AS ssoId, source, user_type AS userType
+    </sql>
+
+    <resultMap id="UserModel" type="com.ixiamen.activity.entity.User">
+        <id column="user_no" property="userNo"/>
+        <result column="user_name" property="userName"/>
+        <result column="real_name" property="realName"/>
+        <result column="password" property="password"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="mobile" property="mobile"/>
+        <result column="head_url" property="headUrl"/>
+        <result column="status" property="status"/>
+        <result column="uuid" property="uuid"/>
+        <result column="create_time" property="createTime"/>
+        <result column="creater" property="creater"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="updater" property="updater"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="sso_id" property="ssoId"/>
+        <result column="source" property="source"/>
+        <result column="user_type" property="userType"/>
+        <result column="role_name" property="roleName"/>
+        <result column="role_code" property="roleCode"/>
+    </resultMap>
+
+
+    <!-- 等同于编写一个普通 list 查询，mybatis-plus 自动替你分页 -->
+    <select id="selectPageByConditionUser" resultMap="UserModel">
+        select distinct u.*,r.role_name,r.role_code from tb_user u left join tb_user_to_role t on u.user_id =t.user_id
+        left join tb_role r on t.role_code =r.role_code
+        where 1=1
+        <if test="info != null and info != '' ">
+            and (
+
+            u.user_name like concat('%',#{info},'%')
+            or u.real_name like concat('%',#{info},'%')
+
+            )
+        </if>
+        <if test="roleCode != null and roleCode != '' ">
+            and r.role_code= #{roleCode}
+        </if>
+        and u.status in
+        <foreach item="item" index="index" collection="status"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        ORDER BY u.create_time DESC
+    </select>
+
+    <!-- 等同于编写一个普通 list 查询，mybatis-plus 自动替你分页 -->
+    <select id="selectPageByLoginHistory" resultMap="UserModel">
+        select distinct t1.user_id,t1.user_name,t1.real_name,
+        t.create_time as last_login_time from tb_operation_log t
+        inner join tb_user t1 on t.user_id = t1.user_id
+        where 1=1
+        and t.action in ('login')
+        <if test="info != null and info != '' ">
+            and (
+
+            t1.user_name like concat('%',#{info},'%')
+            or t1.real_name like concat('%',#{info},'%')
+
+            )
+        </if>
+        <if test="startTime != null and startTime != '' ">
+            <![CDATA[
+            and t.create_time >= str_to_date( #{startTime},'%Y-%m-%d %H:%i:%s')
+            ]]>
+        </if>
+        <if test="endTime != null and endTime != '' ">
+            <![CDATA[
+            and t.create_time <= str_to_date( #{endTime},'%Y-%m-%d %H:%i:%s')
+            ]]>
+        </if>
+        and t1.status in
+        <foreach item="item" index="index" collection="status"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        ORDER BY t.create_time DESC
+    </select>
+
+    <select id="selectPageByRoleConfUser" resultMap="UserModel">
+        select distinct u.*,r.role_name,r.role_code from tb_user u left join tb_user_to_role t on u.user_id =t.user_id
+        left join tb_role r on t.role_code =r.role_code
+        where 1=1
+
+        <if test="roleCode != null and roleCode != '' ">
+            and r.role_code != #{roleCode}
+        </if>
+
+        <if test="info != null and info != '' ">
+            and (
+
+            u.user_name like concat('%',#{info},'%')
+            or u.real_name like concat('%',#{info},'%')
+
+            )
+        </if>
+        and u.status in
+        <foreach item="item" index="index" collection="status"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        ORDER BY u.create_time DESC
+    </select>
+
+</mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ixiamen.activity.mapper.ShareMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ixiamen.activity.entity.Share">
+        <id column="share_id" property="shareId" />
+        <result column="user_id" property="userId" />
+        <result column="user_name" property="userName" />
+        <result column="phone" property="phone" />
+        <result column="mobile" property="mobile" />
+        <result column="share_time" property="shareTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        share_id AS shareId, user_id AS userId, user_name AS userName, phone, mobile, share_time AS shareTime
+    </sql>
+
+</mapper>

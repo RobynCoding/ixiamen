@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ixiamen.activity.mapper.VueMenuMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ixiamen.activity.entity.Menu">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="menu_code" property="menuCode"/>
+        <result column="icon" property="icon"/>
+        <result column="path" property="path"/>
+        <result column="component" property="component"/>
+        <result column="meta" property="meta"/>
+        <result column="menu_name" property="menuName"/>
+        <result column="category" property="category"/>
+        <result column="code" property="code"/>
+        <result column="power_type" property="powerType"/>
+        <result column="display_order" property="displayOrder"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, parent_id AS parentId, menu_code AS menuCode, icon, path, component, meta, menu_name AS menuName, category,
+        code, power_type AS powerType, display_order AS displayOrder, status
+    </sql>
+
+
+    <!-- 根据角色查询菜单 -->
+    <select id="findMenuByRoleCode" resultMap="MenuModel">
+        select m.* from tb_menu m LEFT JOIN tb_role_to_menu r on r.menu_code= m.menu_code
+        WHERE
+        1 = 1 and m.status = 1
+        and m.parent_id=0
+        <if test=" roleCode !=null and roleCode !=''">
+            AND r.role_code = #{roleCode}
+        </if>
+        ORDER BY display_order;
+    </select>
+
+
+    <resultMap id="MenuModel" type="com.ixiamen.activity.entity.Menu">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="menu_code" property="menuCode"/>
+        <result column="icon" property="icon"/>
+        <result column="path" property="path"/>
+        <result column="component" property="component"/>
+        <result column="meta" property="meta"/>
+        <result column="menu_name" property="menuName"/>
+        <result column="category" property="category"/>
+        <result column="code" property="code"/>
+        <result column="power_type" property="powerType"/>
+        <result column="display_order" property="displayOrder"/>
+        <result column="status" property="status"/>
+        <result column="selectFlag" property="selectFlag"/>
+        <!-- 一对多级联查询，ofType表示集合中的元素类型，将uid传递给selectOrdersByld -->
+        <collection property="children" ofType="com.ixiamen.activity.entity.Menu"
+                    column="id" select="com.ixiamen.activity.mapper.MenuMapper.selectMenuByParentId"/>
+    </resultMap>
+
+    <select id="selectMenuByParentId" resultMap="BaseResultMap"
+            parameterType="java.lang.String">
+        select *
+        from tb_menu
+        where status = 1
+          and parent_id = #{parentId}
+        ORDER BY display_order;
+    </select>
+
+
+    <select id="findMenuTree" resultMap="MenuModel">
+        select * from tb_menu where status=1 and parent_id=0
+        <if test="powerType != null">
+            and power_type in
+            <foreach item="item" index="index" collection="powerType"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+
+        ORDER BY display_order;
+    </select>
+
+    <select id="findMenuByRoleCodeAdmin" resultMap="BaseResultMap">
+        select m.* ,
+        (
+        IF(r.role_to_menu_id>0, 1, 0)
+        ) as selectFlag
+        from tb_menu m LEFT JOIN tb_role_to_menu r on r.menu_code= m.menu_code
+        <if test=" roleCode !=null and roleCode !=''">
+            AND r.role_code = #{roleCode}
+        </if>
+        WHERE
+        1 = 1 and m.status = 1
+        and parent_id=0
+        and m.category='menu'
+        <if test="powerType != null">
+            and m.power_type in
+            <foreach item="item" index="index" collection="powerType"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        order by m.display_order
+    </select>
+
+
+</mapper>
